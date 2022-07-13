@@ -1,1 +1,1 @@
-(()=>{"use strict";let e=[2,3,4,5].reduce(((e,o)=>e+o),0);console.log(e),console.log(function(e){return e++}(100))})();
+!function(){"use strict";let o=[2,3,4,5].reduce(((o,e)=>o+e),0);console.log(o),console.log(function(o){return o++}(100))}();

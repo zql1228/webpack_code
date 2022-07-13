@@ -2,6 +2,25 @@ const path=require("path")//nodejs核心模块。专门用来处理路径问题
 const ESLintPlugin=require("eslint-webpack-plugin")//引入插件
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+function getStyleLoader(preprocessor){//传入预处理器
+  return [
+    MiniCssExtractPlugin.loader,
+    "css-loader",
+    {
+      loader: "postcss-loader",
+      options: {
+        postcssOptions: {
+          plugins: [
+            "postcss-preset-env", // 能解决大多数样式兼容性问题
+          ],
+        }
+      }
+    },
+    preprocessor
+    ].filter(Boolean)
+
+}
 module.exports={
     //入口
     entry:'./src/main.js',
@@ -18,29 +37,15 @@ module.exports={
         rules:[            
             {
                 test: /\.css$/i,
-                use: [//use从后往前执行
-                MiniCssExtractPlugin.loader, 
-                    "css-loader"],//将css资源编译成commonjs模块到js中
+                use: getStyleLoader()
               },
               {
                 test: /\.less$/i,
-                use: [
-                  // compiles Less to CSS
-                  MiniCssExtractPlugin.loader,
-                  'css-loader',
-                  'less-loader',
-                ],
+                use:getStyleLoader("less-loader"),
               },
               {
                 test: /\.s[ac]ss$/i,
-                use: [
-                  // 将 JS 字符串生成为 style 节点
-                  MiniCssExtractPlugin.loader,
-                  // 将 CSS 转化成 CommonJS 模块
-                  'css-loader',
-                  // 将 Sass 编译成 CSS
-                  'sass-loader',
-                ],
+                use: getStyleLoader("sass-loader")
             },
             {
                 test: /\.(png|jpe?g|gif|webp|svg)$/,
@@ -80,7 +85,8 @@ module.exports={
       //本插件会将 CSS 提取到单独的文件中，为每个包含 CSS 的 JS 文件创建一个 CSS 文件，并且支持 CSS 和 SourceMaps 的按需加载。
       new MiniCssExtractPlugin({
         filename:"css/main.css"
-      })
+      }),
+      new CssMinimizerPlugin()
     ],
     //模式
     mode:"production"
