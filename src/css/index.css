@@ -3,5 +3,6 @@ body{
     background: url('../images/2.png') no-repeat;
 }
 .box4{
-    background: url('../images/3.webp');
+    height: 200px;
+    background: url('../images/3.webp') no-repeat;
 }

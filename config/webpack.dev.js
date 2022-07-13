@@ -1,12 +1,15 @@
 const path=require("path")//nodejs核心模块。专门用来处理路径问题
+const ESLintPlugin=require("eslint-webpack-plugin")//引入插件
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports={
     //入口
     entry:'./src/main.js',
     //出口
     output:{
         //__dirname代表当前文件的文件夹目录
-        path:path.resolve(__dirname,"dist"),//绝对路径
+        path:undefined, //path.resolve(__dirname,"../dist"),//绝对路径
         filename:'js/main.js',//文件名
+        // clean:true//清空上次打包的内容  注释了是因为开发服务不会输出资源
     },
     
     //loader加载器
@@ -47,16 +50,39 @@ module.exports={
                  }
                },
                generator: {
+                //设置打包文件目录
                 filename: 'images/[hash:10][ext][query]',//hash:10表示hash值只取10位
               },
             },
-            
+            {
+              test: /\.(ttf|woff2?|mp3|mp4|avi)$/,
+              type: 'asset/resource',
+             generator: {
+              //设置打包文件目录
+              filename: 'media/[hash:10][ext][query]',//hash:10表示hash值只取10位
+            },
+          },
+          {
+            test: /\.js$/,
+            exclude: /node_modules/, // 排除node_modules代码不编译
+            loader: "babel-loader",//用于将 ES6 语法编写的代码转换为向后兼容的 JavaScript 语法
+          },
         ]
     },
     //插件
     plugins:[
-
+      new ESLintPlugin({
+        context:path.resolve(__dirname,'../src')}),
+      new HtmlWebpackPlugin({
+        template:path.resolve(__dirname,"../public/index.html")
+      })
     ],
+    //开发服务器  //不会输出资源，在内存中编译打包
+    devServer: {
+      host: "localhost", // 启动服务器域名
+      port: "3000", // 启动服务器端口号
+      open: true, // 是否自动打开浏览器
+    },
     //模式
     mode:"development"
 
