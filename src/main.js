@@ -13,3 +13,12 @@ if (module.hot) {
       console.log(result1);
     })
 }
+document.getElementById('btn').onclick=function(){
+  //import 动态导入模块
+    // 动态导入 --> 实现按需加载
+  // 即使只被引用了一次，也会代码分割
+import(/* webpackChunkName: "math" */"./js/math.js").then((res)=>{
+  console.log(res);
+  // console.log(mul(100,1)); 
+})
+}

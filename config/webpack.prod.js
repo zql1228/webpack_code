@@ -33,6 +33,8 @@ module.exports={
         //__dirname代表当前文件的文件夹目录
         path:path.resolve(__dirname,"../dist"),//绝对路径
         filename:'js/main.js',//文件名
+        chunkFilename:'js/[name]/chunk.js',//动态导入输出资源命名方式
+        // assetModuleFilename:"media/[name].[hash][ext]",//图片，字体等资源命名方式（注意用hash)
         clean:true//清空上次打包的内容  
     },
     
@@ -152,7 +154,11 @@ module.exports={
           },
         },
       }),
-      ]
+      ],
+      //代码分割配置
+      splitChunks:{
+        chunks:"all",//对所有模块都进行分割
+      }
     },
     //模式
     mode:"production",

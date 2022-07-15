@@ -3,6 +3,7 @@ const os=require("os")
 const ESLintPlugin=require("eslint-webpack-plugin")//引入插件
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin=require("terser-webpack-plugin") //webpack内置了不需要安装
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const threads=os.cpus().length
 module.exports={
@@ -13,7 +14,7 @@ module.exports={
         //__dirname代表当前文件的文件夹目录
         path:undefined, //path.resolve(__dirname,"../dist"),//绝对路径
         filename:'js/main.js',//文件名
-        // clean:true//清空上次打包的内容  注释了是因为开发服务不会输出资源
+         clean:true//清空上次打包的内容  注释了是因为开发服务不会输出资源
     },
     
     //loader加载器
@@ -113,7 +114,12 @@ module.exports={
     ],
     optimization: {
       minimize: true,
-      minimizer: [new TerserPlugin()],
+      minimizer:[
+        // css压缩也可以写到optimization.minimizer里面，效果一样的
+      new CssMinimizerPlugin(), //css压缩
+      new TerserPlugin({
+        parallel: threads // 开启多进程 提升打包速度
+      }),
       new ImageMinimizerPlugin({
         minimizer: {
           implementation: ImageMinimizerPlugin.imageminGenerate,
@@ -141,6 +147,7 @@ module.exports={
           },
         },
       }),
+    ]
     },
     //开发服务器  //不会输出资源，在内存中编译打包
     devServer: {
